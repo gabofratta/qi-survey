@@ -1,0 +1,48 @@
+from django.db import models
+
+class SmokingSurvey(models.Model):
+    linker = models.CharField(max_length=15, null=True) # De-identifier
+    source = models.CharField(max_length=25) # Subject population
+    birth_year = models.CharField(max_length=4)
+    has_smoked = models.BooleanField()
+    smoking_age_start = models.CharField(max_length=2, null=True)
+    smoking_frequency = models.CharField(max_length=25, null=True)
+    smoking_full_ppd = models.CharField(max_length=25, null=True)
+    smoking_partial_days = models.CharField(max_length=2, null=True)
+    smoking_partial_ppd = models.CharField(max_length=25, null=True)
+    smoking_former_years = models.CharField(max_length=25, null=True)
+    smoking_former_frequency = models.CharField(max_length=25, null=True)
+    smoking_former_full_ppd = models.CharField(max_length=25, null=True)
+    smoking_former_partial_days = models.CharField(max_length=2, null=True)
+    smoking_former_partial_ppd = models.CharField(max_length=25, null=True)
+    gender = models.CharField(max_length=25, null=True)
+    race = models.CharField(max_length=35, null=True)
+    ethnicity = models.CharField(max_length=50, null=True)
+    work = models.CharField(max_length=35, null=True)
+    income = models.CharField(max_length=35, null=True)
+    medical_history = models.TextField(null=True)
+    is_incapacitated = models.BooleanField(null=True, default=None)
+    zip_code = models.CharField(max_length=5, null=True)
+
+
+class SmokingSurveyPrompts(models.Model):
+    birth_year = models.TextField()
+    has_smoked = models.TextField()
+    smoking_age_start = models.TextField()
+    smoking_frequency = models.TextField()
+    smoking_full_ppd = models.TextField()
+    smoking_partial_days = models.TextField()
+    smoking_partial_ppd = models.TextField()
+    smoking_former_years = models.TextField()
+    smoking_former_frequency = models.TextField()
+    smoking_former_full_ppd = models.TextField()
+    smoking_former_partial_days = models.TextField()
+    smoking_former_partial_ppd = models.TextField()
+    gender = models.TextField()
+    race = models.TextField()
+    ethnicity = models.TextField()
+    work = models.TextField()
+    income = models.TextField()
+    medical_history = models.TextField()
+    is_incapacitated = models.TextField()
+    zip_code = models.TextField()

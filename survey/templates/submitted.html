@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block page_content %}
+
+  <! -- SurveyJS placeholder --> 
+	<div data-bind="css: rootCss" class="sd-root-modern">
+	  <div data-bind="css: containerCss" class="sd-container-modern">
+			<div data-bind="html: processedCompletedHtml, css: completedCss" class="sd-body sd-completedpage">
+					<h3>¡Gracias por completar la encuesta!</h3>
+			</div>
+		</div>
+	</div>
+
+{% endblock %}

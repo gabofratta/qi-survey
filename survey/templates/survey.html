@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block page_content %}
+
+    <! -- SurveyJS placeholder --> 
+    <div id="surveyContainer"></div>
+
+    <! -- SurveyJS code --> 
+    <script src="{% static 'js/survey.js' %}"></script>
+
+    <! -- Set dynamic variables --> 
+    <script type="text/javascript">
+      var linker = '{{ linker }}';
+      var source = '{{ source }}';
+    </script>
+
+{% endblock %}
