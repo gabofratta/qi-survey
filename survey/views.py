@@ -31,10 +31,20 @@ def socios_survey(request, linker):
         return submitted(request)
     return survey(request, {'linker': linker, 'source': 'socios'})
 
+# Check if a given email has already filled out the survey
+@api_view(['GET'])
+def email_exists(request):
+    if request.method != 'GET' or 'email' not in request.GET:
+        return HttpResponseForbidden()
+    email = request.GET['email']
+    return Response({"success": True, 
+        "exists": SmokingSurvey.objects.filter(email=email).exists()})
+
 # Convert and save smoking habits survey response to database
 @api_view(['POST'])
 def post_response(request):
     serializer = SmokingSurveySerializer(data=request.data)
     if serializer.is_valid(raise_exception=True):
         survey_saved = serializer.save()
-    return Response({"success": "Survey response {} saved".format(survey_saved.id)})
+    return Response({"success": "Survey {} saved".format(survey_saved.id), 
+        "qualifies": survey_saved.qualifies()})

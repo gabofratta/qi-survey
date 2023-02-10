@@ -5,14 +5,43 @@
 
     <! -- SurveyJS placeholder --> 
     <div id="surveyContainer"></div>
-
-    <! -- SurveyJS code --> 
-    <script src="{% static 'js/survey.js' %}"></script>
+    
+    <! -- Results and information --> 
+    <div id="feedback_container" class="container mt-5 d-none">
+      <div id="qualify_yes" class="card mb-3 d-none">
+        <div class="card-body">
+          <p class="card-text">
+            Basado en sus respuestas, usted <b>podría ser</b> candidato a una prueba de cernimiento para el cáncer de pulmón. ¡Hable con su médico!
+          </p>
+        </div>
+      </div>
+      <div id="qualify_no" class="card mb-3 d-none">
+        <div class="card-body">
+          <p class="card-text">
+            Basado en sus respuestas, usted <b>probablemente no es</b> candidato a una prueba de cernimiento para el cáncer de pulmón. ¡Quizás conoce a alguien que lo sea!
+          </p>
+        </div>
+      </div>
+      <div id="screening_info" class="card mb-3">
+        <div class="card-body">
+          <h5 class="card-title">Cernimiento para cáncer de pulmón</h5>
+          <p class="card-text">
+            La prueba de cernimiento recomendada para el cáncer de pulmón es un CT de baja dosis, pero solo para algunos pacientes. Puede encontrar más información en la página del CDC:
+          </p>
+          <a href="https://www.cdc.gov/spanish/cancer/lung/basic_info/screening.htm" class="card-link">
+            https://www.cdc.gov/spanish/cancer/lung/basic_info/screening.htm
+          </a>
+        </div>
+      </div>
+    </div>
 
     <! -- Set dynamic variables --> 
     <script type="text/javascript">
       var linker = '{{ linker }}';
       var source = '{{ source }}';
     </script>
+
+    <! -- SurveyJS code --> 
+    <script src="{% static 'js/survey.js' %}"></script>
 
 {% endblock %}
