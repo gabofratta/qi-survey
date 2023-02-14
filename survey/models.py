@@ -8,19 +8,10 @@ class SmokingSurvey(models.Model):
     NEVER = 'Nunca'
 
     # Number of cigs a day: (text/value, avg of range)
-    LESS_THAN_5 = ('Menos de 5', 5)
-    _5_TO_9 = ('5 a 9', 7)
-    _10_TO_14 = ('10 a 14', 12)
-    _15_TO_19 = ('15 a 19', 17)
-    _20_TO_24 = ('20 a 24', 22)
-    _25_TO_29 = ('25 a 29', 27)
-    _30_TO_34 = ('30 a 34', 32)
-    _35_TO_39 = ('35 a 39', 37)
-    _40_TO_44 = ('40 a 44', 42)
-    _45_TO_49 = ('45 a 49', 47)
-    _50_TO_54 = ('50 a 54', 52)
-    _55_TO_59 = ('55 a 59', 57)
-    MORE_THAN_60 = ('Más de 60', 60)
+    CIGS_A_DAY_OPTIONS = [('Menos de 5', 5), ('5 a 9', 7), ('10 a 14', 12),
+    ('15 a 19', 17), ('20 a 24', 22), ('25 a 29', 27), ('30 a 34', 32),
+    ('35 a 39', 37), ('40 a 44', 42), ('45 a 49', 47), ('50 a 54', 52),
+    ('55 a 59', 57), ('Más de 60', 60)]
 
     # Non-number years since quitting
     LESS_THAN_1 = 'Menos de 1'
@@ -58,49 +49,31 @@ class SmokingSurvey(models.Model):
     def screening_age(self):
         return (self.age() >= 50 and self.age() <= 80)
 
+    # Convert number of days smoking in 30 days to a decimal (two points)
+    def days_per_month(self, smoking_days):
+        return round(int(smoking_days) / 30, 2)
+
     # Convert number of cigarettes to packs, defaults to 20 cigs in a pack
     # Uses average value of the cigarette range, returns two decimal points
     def cigs_to_packs(self, cigs, cigs_per_pack=20):
         cig_average = 0
-        if cigs == self.LESS_THAN_5[0]:
-            cig_average = self.LESS_THAN_5[1]
-        elif cigs == self._5_TO_9[0]:
-            cig_average = self._5_TO_9[1]
-        elif cigs == self._10_TO_14[0]:
-            cig_average = self._10_TO_14[1]
-        elif cigs == self._15_TO_19[0]:
-            cig_average = self._15_TO_19[1]
-        elif cigs == self._20_TO_24[0]:
-            cig_average = self._20_TO_24[1]
-        elif cigs == self._25_TO_29[0]:
-            cig_average = self._25_TO_29[1]
-        elif cigs == self._30_TO_34[0]:
-            cig_average = self._30_TO_34[1]
-        elif cigs == self._35_TO_39[0]:
-            cig_average = self._35_TO_39[1]
-        elif cigs == self._40_TO_44[0]:
-            cig_average = self._40_TO_44[1]
-        elif cigs == self._45_TO_49[0]:
-            cig_average = self._45_TO_49[1]
-        elif cigs == self._50_TO_54[0]:
-            cig_average = self._50_TO_54[1]
-        elif cigs == self._55_TO_59[0]:
-            cig_average = self._55_TO_59[1]
-        elif cigs == self.MORE_THAN_60[0]:
-            cig_average = self.MORE_THAN_60[1]
+        for cigs_a_day_pair in self.CIGS_A_DAY_OPTIONS:
+            if cigs == cigs_a_day_pair[0]:
+                cig_average = cigs_a_day_pair[1]
+                break
         return round(int(cig_average) / cigs_per_pack, 2)
 
     # Calculate pack years. Should only be called inside qualifies() method.
     def pack_years(self):
         smoking_years = self.age() - int(self.smoking_age_start)
-        days_a_month_mod = 1 # Modifier for 'some day' smokers
+        days_per_month_mod = 1 # Modifier for 'some day' smokers
         packs_per_day = 0
         # Current, every day smokers
         if self.smoking_frequency == self.EVERY_DAY:
             packs_per_day = self.cigs_to_packs(self.smoking_full_cigs)
         # Current, some day smokers
         elif self.smoking_frequency == self.SOME_DAYS:
-            days_a_month_mod = round(int(self.smoking_partial_days) / 30, 2)
+            days_per_month_mod = self.days_per_month(self.smoking_partial_days)
             packs_per_day = self.cigs_to_packs(self.smoking_partial_cigs)
         # Former smokers
         elif self.smoking_frequency == self.NEVER:
@@ -111,9 +84,9 @@ class SmokingSurvey(models.Model):
             if self.smoking_former_frequency == self.EVERY_DAY:
                 packs_per_day = self.cigs_to_packs(self.smoking_former_full_cigs)
             elif self.smoking_former_frequency == self.SOME_DAYS:
-                days_a_month_mod = round(int(self.smoking_former_partial_days) / 30, 2)
+                days_per_month_mod = self.days_per_month(self.smoking_former_partial_days)
                 packs_per_day = self.cigs_to_packs(self.smoking_former_partial_cigs)
-        return (smoking_years * days_a_month_mod * packs_per_day)
+        return (smoking_years * days_per_month_mod * packs_per_day)
 
     # Check if lung cancer screening is needed based on responses
     def qualifies(self):
